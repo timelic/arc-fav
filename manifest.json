@@ -14,16 +14,24 @@
       "run_at": "document_end"
     }
   ],
-  "host_permissions": ["*://*/*"],
+  "host_permissions": ["*://*/*", "favicon"],
   "manifest_version": 3,
   "name": "vite-vue3-chrome-extension-v3",
   "options_page": "src/options/index.html",
-  "permissions": ["storage", "activeTab"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "bookmarks",
+    "runtime",
+    "favicon",
+    "chrome://favicon/",
+    "chrome://favicon/*"
+  ],
   "version": "1.0.0",
   "web_accessible_resources": [
     {
-      "matches": ["*://*/*"],
-      "resources": ["src/content-script/index.ts"]
+      "matches": ["<all_urls>"],
+      "resources": ["src/content-script/index.ts", "_favicon/*"]
     }
   ]
 }

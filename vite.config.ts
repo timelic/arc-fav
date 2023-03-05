@@ -1,20 +1,23 @@
-import { crx } from '@crxjs/vite-plugin'
-import vue from '@vitejs/plugin-vue'
-import { dirname, relative } from 'path'
-import AutoImport from 'unplugin-auto-import/vite'
-import IconsResolver from 'unplugin-icons/resolver'
-import Icons from 'unplugin-icons/vite'
-import Components from 'unplugin-vue-components/vite'
-import { defineConfig } from 'vite'
-import manifest from './manifest.json'
+import { crx } from '@crxjs/vite-plugin';
+import vue from '@vitejs/plugin-vue';
+import { dirname, relative } from 'path';
+import AutoImport from 'unplugin-auto-import/vite';
+import IconsResolver from 'unplugin-icons/resolver';
+import Icons from 'unplugin-icons/vite';
+import Components from 'unplugin-vue-components/vite';
+import { defineConfig } from 'vite';
+import manifest from './manifest.json';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
     alias: {
       '~/': 'src/',
+      hooks: '~/hooks',
     },
   },
+  base: '',
   plugins: [
     vue(),
     // @ts-ignore
@@ -40,7 +43,10 @@ export default defineConfig({
     }),
 
     // https://github.com/antfu/unplugin-icons
-    Icons(),
+    Icons({
+      // experimental
+      autoInstall: true,
+    }),
 
     // rewrite assets to use relative path
     {
@@ -51,7 +57,7 @@ export default defineConfig({
         return html.replace(
           /"\/assets\//g,
           `"${relative(dirname(path), '/assets')}/`
-        )
+        );
       },
     },
   ],
@@ -64,4 +70,4 @@ export default defineConfig({
     include: ['vue', '@vueuse/core'],
     exclude: ['vue-demi'],
   },
-})
+});
