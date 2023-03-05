@@ -38,6 +38,7 @@ main {
   display: flex;
   justify-content: center;
   padding-top: 30px;
+  padding-bottom: 20px;
 }
 #content {
   width: var(--content-width);
@@ -57,6 +58,10 @@ main {
   }
   .menu {
     background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    height: 100%;
+    overflow-y: scroll;
   }
 }
 </style>

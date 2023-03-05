@@ -7,14 +7,13 @@
     draggable
     :data="data"
     :checked-keys="checkedKeys"
-    :expanded-keys="expandedKeys"
-    :default-expanded-keys="['1']"
+    v-model:expanded-keys="expandedKeys"
     :selectable="false"
     @drop="handleDrop"
     @update:checked-keys="handleCheckedKeysChange"
     @update:expanded-keys="handleExpandedKeysChange"
     :node-props="nodeProps"
-    :class="`tree--${mode}`"
+    :class="`tree--${mode} tree`"
   />
   <!-- 右键菜单 -->
   <n-dropdown
@@ -92,9 +91,14 @@ import {
   type DropdownOption,
   FormInst,
   useMessage,
+  NIcon,
 } from 'naive-ui';
 import { type Key } from 'naive-ui/es/tree/src/interface';
 import { useBookmarks, type Bookmark } from 'hooks';
+// @ts-ignore
+import Folder from '~icons/mdi/folder-outline';
+// @ts-ignore
+import FolderOpen from '~icons/mdi/folder-open-outline';
 
 withDefaults(
   defineProps<{
@@ -118,11 +122,25 @@ const {
 function convertToTreeOption(
   bookmark: chrome.bookmarks.BookmarkTreeNode
 ): TreeOption {
+  const key = bookmark.id.toString();
   const treeOption: TreeOption = {
-    key: bookmark.id.toString(),
-    label: bookmark.id.toString() + ': ' + bookmark.title, // TODO 先看看
+    key,
+    label: bookmark.title, // TODO 先看看
     isLeaf: !bookmark.children,
     url: bookmark.url,
+    prefix: !bookmark.url
+      ? () =>
+          h(
+            NIcon,
+            {
+              size: '18px',
+            },
+            {
+              default: () =>
+                h(expandedKeys.value.includes(key) ? FolderOpen : Folder),
+            }
+          )
+      : undefined,
   };
   if (bookmark.children) {
     treeOption.children = bookmark.children.map((child) =>
@@ -142,7 +160,7 @@ function convert(bookmarks: chrome.bookmarks.BookmarkTreeNode[]): TreeOption[] {
 /**
  * 书签数据
  */
-const data: Ref<TreeOption[]> = ref<TreeOption[]>() as any;
+const data: Ref<TreeOption[]> = ref<TreeOption[]>([]) as any;
 const expandedKeys = ref<Key[]>([]);
 const checkedKeys = ref<Key[]>([]);
 
@@ -180,7 +198,7 @@ function handleExpandedKeysChange(_expandedKeys: string[]) {
 }
 
 // 以后要根据能拖动与否来使用这个方法...
-function handleCheckedKeysChange(_checkedKeys: string[]) {
+async function handleCheckedKeysChange(_checkedKeys: string[]) {
   if (_checkedKeys.length < 1) {
     return;
   }
@@ -211,6 +229,7 @@ function handleCheckedKeysChange(_checkedKeys: string[]) {
     // chrome.tabs.create({ url });
     window.open(url);
   }
+  await refreshData();
 }
 
 async function handleDrop({ node, dragNode, dropPosition }: TreeDropInfo) {
@@ -352,6 +371,7 @@ function handleSelect(key: Action): void {
 
 function handleClickoutside(): void {
   showDropdown.value = false;
+  clearSelected();
 }
 
 function nodeProps({
@@ -361,13 +381,40 @@ function nodeProps({
 }): Record<string, unknown> {
   return {
     onContextmenu(e: MouseEvent): void {
+      console.log('onContextmenu', e);
       currentSelectKey.value = option.key as string;
       showDropdown.value = true;
       x.value = e.clientX;
       y.value = e.clientY;
       e.preventDefault();
+      let nodeElement = e.target as HTMLElement;
+      // 往上找父节点
+      while (nodeElement && !nodeElement.classList.contains('n-tree-node')) {
+        nodeElement = nodeElement.parentElement as HTMLElement;
+      }
+      console.log(nodeElement);
+      currentSelectDomElement.value = nodeElement;
     },
   };
+}
+
+const currentSelectDomElement = ref<HTMLElement>();
+watch(
+  currentSelectDomElement,
+  (newValue, oldValue) => {
+    if (oldValue) {
+      oldValue.classList.remove('n-tree-node-selected');
+    }
+    if (newValue) {
+      newValue.classList.add('n-tree-node-selected');
+    }
+  },
+  { immediate: true }
+);
+function clearSelected() {
+  if (currentSelectDomElement.value) {
+    currentSelectDomElement.value.classList.remove('n-tree-node-selected');
+  }
 }
 // End Region 右键菜单
 
@@ -409,7 +456,9 @@ const urlFeedback = computed(() => createFeedback(modal.value.url));
 async function submitCallback() {
   // 后面改成ref的验证
   if (
-    (showUrlInput.value && urlStatus.value === 'error') ||
+    currentAction.value !== 'delete' &&
+    showUrlInput.value &&
+    urlStatus.value === 'error' &&
     modal.value.title === ''
   ) {
     message.error('名字和网址均不可为空');
@@ -481,5 +530,14 @@ const showUrlInput = computed(
 
 :deep(.n-form-item .n-form-item-feedback-wrapper) {
   min-height: unset !important;
+}
+
+.n-tree :deep(.n-tree-node) {
+  height: 34px !important;
+  align-items: center;
+  border-radius: 5px;
+}
+:global(.n-tree-node.n-tree-node-selected) {
+  background-color: #e1ecff;
 }
 </style>
