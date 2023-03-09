@@ -34,16 +34,16 @@ const favicon = (pageUrl: string, size: number = 24) => {
 main {
   background-color: #f3f5f7;
   height: calc(100vh - var(--header-height));
-  overflow: hidden;
+  overflow-x: hidden;
   display: flex;
   justify-content: center;
-  padding-top: 30px;
+  padding-top: 10px;
   padding-bottom: 20px;
 }
 #content {
   width: var(--content-width);
-  background-color: #ebeef1;
-  padding: 20px 35px;
+  background-color: transparent;
+  padding: 20px 0;
   row-gap: 20px;
   display: flex;
   flex-direction: column;
@@ -60,8 +60,8 @@ main {
     background-color: white;
     border-radius: 10px;
     padding: 20px;
-    height: 100%;
-    overflow-y: scroll;
+    // height: 100%;
+    // overflow-y: scroll;
   }
 }
 </style>

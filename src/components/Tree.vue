@@ -95,6 +95,7 @@ import {
 } from 'naive-ui';
 import { type Key } from 'naive-ui/es/tree/src/interface';
 import { useBookmarks, type Bookmark } from 'hooks';
+import Icon from './Icon.vue';
 // @ts-ignore
 import Folder from '~icons/mdi/folder-outline';
 // @ts-ignore
@@ -140,7 +141,19 @@ function convertToTreeOption(
                 h(expandedKeys.value.includes(key) ? FolderOpen : Folder),
             }
           )
-      : undefined,
+      : () =>
+          h(
+            NIcon,
+            {
+              size: '18px',
+            },
+            {
+              default: () =>
+                h(Icon, {
+                  src: getFaviconUrl(bookmark.url!),
+                }),
+            }
+          ),
   };
   if (bookmark.children) {
     treeOption.children = bookmark.children.map((child) =>
@@ -517,6 +530,15 @@ const showUrlInput = computed(
 );
 
 // End Region 模态框
+
+// 获取 fav URL
+function getFaviconUrl(url: string, size: number = 32): string {
+  // 提取域名
+  const domain = new URL(url).hostname;
+
+  // 构建 API URL
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`;
+}
 </script>
 
 <style scoped lang="scss">
