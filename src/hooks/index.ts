@@ -1,2 +1,2 @@
 export { useBookmarks } from './use-bookmarks';
-export type { Bookmark } from './use-bookmarks';
+export { useImage } from './use-image';

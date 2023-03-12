@@ -15,7 +15,8 @@ withDefaults(
 <template>
   <n-image
     :src="src"
+    style="border-radius: 4px"
     v-if="src"
   />
-  <span v-else />
+  <span v-else>loading...</span>
 </template>

@@ -94,7 +94,7 @@ import {
   NIcon,
 } from 'naive-ui';
 import { type Key } from 'naive-ui/es/tree/src/interface';
-import { useBookmarks, type Bookmark } from 'hooks';
+import { useBookmarks } from '../hooks';
 import Icon from './Icon.vue';
 // @ts-ignore
 import Folder from '~icons/mdi/folder-outline';
@@ -182,14 +182,31 @@ async function refreshData() {
   console.log('data refreshed', data.value);
 }
 
+const EXPANDED_KEYS = 'EXPANDED_KEYS';
+
 /*
  * 获取基础的书签数据
  */
 (async () => {
   await refreshData();
-  // console.log('data', data.value);
   // 默认展开第一层
-  expandedKeys.value = data.value?.map((x) => x.key!) || [];
+  // expandedKeys.value = data.value?.map((x) => x.key!) || [];
+  // 默认展开上次选择的层
+  const tmp: string[] =
+    (await chrome.storage.local.get(EXPANDED_KEYS))[EXPANDED_KEYS] ?? [];
+  // 搜索整棵树 拿出所有节点
+  function getAllTreeNode(tree: TreeOption[]): TreeOption[] {
+    return tree.reduce((acc, cur) => {
+      acc.push(cur);
+      if (cur.children) {
+        acc.push(...getAllTreeNode(cur.children));
+      }
+      return acc;
+    }, [] as TreeOption[]);
+  }
+  const treeNodeKeys = getAllTreeNode(data.value).map((x) => x.key!);
+  // 删掉 tmp 之中不存在的 key
+  expandedKeys.value = tmp.filter((x) => treeNodeKeys.includes(x));
 })();
 
 function findSiblingsAndIndex(
@@ -206,8 +223,12 @@ function findSiblingsAndIndex(
   return [null, null];
 }
 
-function handleExpandedKeysChange(_expandedKeys: string[]) {
+async function handleExpandedKeysChange(_expandedKeys: string[]) {
   expandedKeys.value = _expandedKeys;
+  // 然后存到 storage 里面
+  await chrome.storage.local.set({
+    [EXPANDED_KEYS]: _expandedKeys,
+  });
 }
 
 // 以后要根据能拖动与否来使用这个方法...
@@ -535,7 +556,6 @@ const showUrlInput = computed(
 function getFaviconUrl(url: string, size: number = 32): string {
   // 提取域名
   const domain = new URL(url).hostname;
-
   // 构建 API URL
   return `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`;
 }
@@ -561,5 +581,11 @@ function getFaviconUrl(url: string, size: number = 32): string {
 }
 :global(.n-tree-node.n-tree-node-selected) {
   background-color: #e1ecff;
+}
+:global(.n-tree-node-content__text) {
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 </style>

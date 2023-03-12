@@ -1,43 +1,85 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useBookmarks } from '../hooks';
+import {
+  NMessageProvider,
+  type TreeSelectOption,
+  NTreeSelect,
+  NButton,
+} from 'naive-ui';
+
+const { createBookmark } = useBookmarks();
+
+const selected = ref<string>('2');
+
+function handleUpdateValue(
+  value: string | number | Array<string | number> | null,
+  option: TreeSelectOption | null | Array<TreeSelectOption | null>
+) {
+  selected.value = value?.toString() ?? '';
+  chrome.storage.local.set({ [SELECTED_FOLDER]: selected.value });
+}
+
+function convert(
+  bookmarkTreeNodes: chrome.bookmarks.BookmarkTreeNode[]
+): TreeSelectOption[] {
+  const treeSelectOptions: TreeSelectOption[] = [];
+
+  bookmarkTreeNodes.forEach((node) => {
+    if (node?.children?.some((child) => child.children)) {
+      const childrenNodes = convert(node.children);
+      const treeOption: TreeSelectOption = {
+        key: node.id,
+        label: node.title,
+        children: childrenNodes,
+      };
+      treeSelectOptions.push(treeOption);
+    } else {
+      const treeOption: TreeSelectOption = {
+        key: node.id,
+        label: node.title,
+      };
+      treeSelectOptions.push(treeOption);
+    }
+  });
+
+  return treeSelectOptions;
+}
+
+const SELECTED_FOLDER = 'SELECTED_FOLDER';
+
+const options: Ref<TreeSelectOption[]> = ref([]);
+chrome.bookmarks.getTree(async (bookmarkTreeNodes) => {
+  options.value = convert(bookmarkTreeNodes)[0].children!;
+  selected.value =
+    (await chrome.storage.local.get(SELECTED_FOLDER))[SELECTED_FOLDER] ??
+    options.value![0].key?.toString() ??
+    '';
+  console.log(selected.value);
+});
+
+async function addBookmark() {
+  try {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tabId = tabs[0].id ?? 0;
+    const tab = await chrome.tabs.get(tabId);
+    await createBookmark({
+      parentId: selected.value,
+      title: tab.title,
+      url: tab.url,
+    });
+  } catch (error) {}
+}
+</script>
 
 <template>
-  <h1 class="text-3xl font-bold underline">Hello world!</h1>
-
-  <div>
-    <a
-      href="https://vitejs.dev"
-      target="_blank"
-    >
-      <img
-        src="/vite.svg"
-        class="logo"
-        alt="Vite logo"
-      />
-    </a>
-    <a
-      href="https://vuejs.org/"
-      target="_blank"
-    >
-      <img
-        src="../assets/vue.svg"
-        class="logo vue"
-        alt="Vue logo"
-      />
-    </a>
-  </div>
+  <n-message-provider>
+    <n-button @click="addBookmark">收藏</n-button>
+    <n-tree-select
+      :options="options"
+      :value="selected"
+      @update:value="handleUpdateValue"
+    />
+  </n-message-provider>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<style scoped></style>

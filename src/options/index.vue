@@ -1,8 +1,7 @@
 <script setup lang="ts">
 // @ts-ignore
 import IconMore from '~icons/fluent/more-vertical-28-regular';
-import { NMenu, type MenuOption, NMessageProvider } from 'naive-ui';
-import { onMounted } from 'vue';
+import { NMessageProvider } from 'naive-ui';
 
 const favicon = (pageUrl: string, size: number = 24) => {
   const url = new URL(`chrome-extension://${chrome.runtime.id}/_favicon/`);
@@ -54,6 +53,7 @@ main {
     .text-bookmarks {
       font-size: 26px;
       font-weight: 300;
+      font-family: 'Oxanium', cursive;
     }
   }
   .menu {

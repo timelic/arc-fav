@@ -1,21 +1,3 @@
-export type Bookmark = {
-  id?: string; // 新的当然没有id
-  title: string;
-  url: string | undefined;
-  parentId?: string | undefined;
-  isFolder: boolean;
-};
-
-function convert(bookmark: Bookmark): chrome.bookmarks.BookmarkTreeNode {
-  return {
-    id: bookmark.id ?? '',
-    title: bookmark.title,
-    url: bookmark.url,
-    parentId: bookmark.parentId,
-    children: bookmark.isFolder ? [] : undefined,
-  };
-}
-
 export function useBookmarks() {
   async function removeBookmark(id: string) {
     const bookmarks = await getBookmarks();

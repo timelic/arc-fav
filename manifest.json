@@ -1,6 +1,7 @@
 {
   "action": {
-    "default_popup": "src/popup/index.html"
+    "default_popup": "src/popup/index.html",
+    "default_title": "My Extension"
   },
   "background": {
     "service_worker": "src/background/index.ts",
@@ -14,18 +15,17 @@
       "run_at": "document_end"
     }
   ],
-  "host_permissions": ["*://*/*", "favicon"],
+  "host_permissions": ["*://*/*"],
   "manifest_version": 3,
-  "name": "vite-vue3-chrome-extension-v3",
+  "name": "Arc Fav",
   "options_page": "src/options/index.html",
   "permissions": [
     "storage",
     "activeTab",
     "bookmarks",
-    "runtime",
     "favicon",
-    "chrome://favicon/",
-    "chrome://favicon/*"
+    "contextMenus",
+    "tabs"
   ],
   "version": "1.0.0",
   "web_accessible_resources": [
@@ -33,5 +33,10 @@
       "matches": ["<all_urls>"],
       "resources": ["src/content-script/index.ts", "_favicon/*"]
     }
-  ]
+  ],
+  "icons": {
+    "16": "public/logo.png",
+    "48": "public/logo.png",
+    "128": "public/logo.png"
+  }
 }
