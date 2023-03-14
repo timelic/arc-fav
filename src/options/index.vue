@@ -10,12 +10,12 @@ const favicon = (pageUrl: string, size: number = 24) => {
 
   return url.href;
 };
-// console.log(favicon('https://www.google.com'));
+const searchPattern = ref('');
 </script>
 
 <template>
   <n-message-provider>
-    <Header />
+    <Header v-model:value="searchPattern" />
     <main>
       <div id="content">
         <div class="content-top">
@@ -23,7 +23,7 @@ const favicon = (pageUrl: string, size: number = 24) => {
           <IconMore />
         </div>
         <div class="menu">
-          <Tree />
+          <Tree :pattern="searchPattern" />
         </div>
       </div></main
   ></n-message-provider>
@@ -34,10 +34,16 @@ main {
   background-color: #f3f5f7;
   height: calc(100vh - var(--header-height));
   overflow-x: hidden;
+  overflow-y: overlay;
   display: flex;
   justify-content: center;
   padding-top: 10px;
   padding-bottom: 20px;
+  &::-webkit-scrollbar {
+    // position: absolute;
+    // right: 0;
+    // top: 0;
+  }
 }
 #content {
   width: var(--content-width);

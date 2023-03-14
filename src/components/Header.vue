@@ -1,6 +1,15 @@
 <script setup lang="ts">
 // @ts-ignore
-import IconAccountBox from '~icons/fluent/search-32-regular'
+import IconAccountBox from '~icons/fluent/search-32-regular';
+import { withDefaults } from 'vue';
+withDefaults(
+  defineProps<{
+    value: string;
+  }>(),
+  {
+    value: '',
+  }
+);
 </script>
 
 <template>
@@ -14,6 +23,8 @@ import IconAccountBox from '~icons/fluent/search-32-regular'
         <IconAccountBox class="search-icon" />
         <input
           type="text"
+          :value="value"
+          @input="($event) => $emit('update:value', ($event.target as HTMLInputElement)?.value)"
           autocomplete="off"
           class="search__input js__search-input o__ltr"
           placeholder="Search for articles..."
@@ -58,6 +69,10 @@ header {
     align-items: center;
     column-gap: 16px;
     padding: 20px;
+    transition: 0.2s background-color ease-in-out;
+    &:has(:focus-within) {
+      background-color: #ffffff60;
+    }
     .search-icon {
       width: 24px;
       height: 24px;

@@ -14,6 +14,8 @@
     @update:expanded-keys="handleExpandedKeysChange"
     :node-props="nodeProps"
     :class="`tree--${mode} tree`"
+    :pattern="pattern"
+    :show-irrelevant-nodes="false"
   />
   <!-- 右键菜单 -->
   <n-dropdown
@@ -104,9 +106,11 @@ import FolderOpen from '~icons/mdi/folder-open-outline';
 withDefaults(
   defineProps<{
     mode: 'click' | 'edit';
+    pattern: string;
   }>(),
   {
     mode: 'click',
+    pattern: '',
   }
 );
 
