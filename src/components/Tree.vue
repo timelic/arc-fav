@@ -80,7 +80,6 @@
 
 <script setup lang="ts">
 import { ref, computed, withDefaults } from 'vue';
-import { repeat } from 'seemly';
 import {
   NTree,
   NDropdown,
