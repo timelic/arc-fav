@@ -560,7 +560,10 @@ function getFaviconUrl(url: string, size: number = 32): string {
   // 提取域名
   const domain = new URL(url).hostname;
   // 构建 API URL
-  return `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`;
+  // return `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`;
+  // return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+  // return `chrome://favicon/${url}`;
+  return `https://icon.horse/icon/${domain}`;
 }
 </script>
 
@@ -590,5 +593,10 @@ function getFaviconUrl(url: string, size: number = 32): string {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+}
+// 有些时候会丢失宽高 不知道为啥
+.n-tree :deep(.n-image img) {
+  width: 18px;
+  height: 18px;
 }
 </style>

@@ -25,8 +25,9 @@ const searchPattern = ref('');
         <div class="menu">
           <Tree :pattern="searchPattern" />
         </div>
-      </div></main
-  ></n-message-provider>
+      </div>
+    </main>
+  </n-message-provider>
 </template>
 
 <style scoped lang="scss">
@@ -39,13 +40,9 @@ main {
   justify-content: center;
   padding-top: 10px;
   padding-bottom: 20px;
-  &::-webkit-scrollbar {
-    // position: absolute;
-    // right: 0;
-    // top: 0;
-  }
 }
 #content {
+  height: max-content;
   width: var(--content-width);
   background-color: transparent;
   padding: 20px 0;
