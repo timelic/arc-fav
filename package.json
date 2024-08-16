@@ -13,6 +13,7 @@
     "@vitejs/plugin-vue": "^4.0.0",
     "@vueuse/core": "^9.13.0",
     "autoprefixer": "^10.4.13",
+    "hot-reload-extension-vite": "^1.0.13",
     "naive-ui": "^2.34.3",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
@@ -33,7 +34,8 @@
   "scripts": {
     "build": "vue-tsc && vite build",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "hot-reload": "NODE_ENV=development vue-tsc && vite build --watch"
   },
   "type": "module",
   "version": "0.0.1"

@@ -8,6 +8,7 @@ import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 import manifest from './manifest.json';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import hotReloadExtension from 'hot-reload-extension-vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -19,6 +20,10 @@ export default defineConfig({
   },
   base: '',
   plugins: [
+    hotReloadExtension({
+      log: true,
+      backgroundPath: 'src/background/index.ts' // src/pages/background/index.ts
+    }),
     vue(),
     // @ts-ignore
     crx({ manifest }),
