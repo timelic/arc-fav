@@ -101,6 +101,9 @@ import Icon from './Icon.vue';
 import Folder from '~icons/mdi/folder-outline';
 // @ts-ignore
 import FolderOpen from '~icons/mdi/folder-open-outline';
+// @ts-ignore
+import Web from '~icons/mdi/web';
+import { imageCache } from './cache';
 
 withDefaults(
   defineProps<{
@@ -153,10 +156,25 @@ function convertToTreeOption(
             {
               default: () =>
                 h(Icon, {
-                  src: getFaviconUrl(bookmark.url!),
+                  // src: await imageCache.loadImage(getFaviconUrl(bookmark.url!)),
+                  src: imageCache.getImage(getFaviconUrl(bookmark.url!)),
                 }),
             }
           ),
+    // h(
+    //   NIcon,
+    //   {
+    //     size: '18px',
+    //   },
+    //   {
+    //     default: async () =>
+    //       // h(Icon, {
+    //       //   // src: await imageCache.loadImage(getFaviconUrl(bookmark.url!)),
+    //       //   src: getFaviconUrl(bookmark.url!),
+    //       // }),
+    //       h(Web),
+    //   }
+    // ),
   };
   if (bookmark.children) {
     treeOption.children = bookmark.children.map((child) =>
@@ -169,8 +187,10 @@ function convertToTreeOption(
 /**
  * 递归转换书签数据
  */
-function convert(bookmarks: chrome.bookmarks.BookmarkTreeNode[]): TreeOption[] {
-  return bookmarks.map((x) => convertToTreeOption(x));
+async function convert(
+  bookmarks: chrome.bookmarks.BookmarkTreeNode[]
+): Promise<TreeOption[]> {
+  return Promise.all(bookmarks.map((x) => convertToTreeOption(x)));
 }
 
 /**
@@ -181,7 +201,7 @@ const expandedKeys = ref<Key[]>([]);
 const checkedKeys = ref<Key[]>([]);
 
 async function refreshData() {
-  data.value = convert(await getBookmarks());
+  data.value = await convert(await getBookmarks());
   console.log('data refreshed', data.value);
 }
 

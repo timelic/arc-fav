@@ -15,5 +15,46 @@
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 500px;
+  /* min-height: 500px; */
+  background-color: #e9eaf1;
+  padding: 15px;
+}
+
+.tree-wrap {
+  background-color: white;
+  border-radius: 5px;
+  padding: 8px 5px;
+}
+
+.btn-fav {
+  margin-top: 5px;
+  margin-left: fill-available;
+}
+
+.macos-button {
+  border: 1px solid rgb(221, 221, 221);
+  background: white;
+  display: inline-block;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 7px;
+  text-align: center;
+  padding: 0.1em 0.6em;
+}
+.macos-button:active {
+  color: white;
+  background: linear-gradient(rgb(74, 144, 254), rgb(7, 92, 229));
+  border-color: rgb(31, 110, 240);
+  border-top-color: rgb(57, 133, 255);
+  border-bottom-color: rgb(2, 86, 224);
+}
+
+.macos-button:focus:not(.focus-visible) {
+  outline: none; /* Uses a polyfill so that focus shows up on tab select but not on button click (this is how default styled buttons work in chrome, not sure why styled buttons work differently) */
+}
+
+.title-fav {
+  /* font-size: 26px;
+  font-weight: 300; */
+  /* font-family: 'Oxanium', cursive; */
 }
